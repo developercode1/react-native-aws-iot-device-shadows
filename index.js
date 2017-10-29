@@ -105,4 +105,6 @@ class AWSIoTMQTT extends Component {
     }
 }
 
-export default AWSIoTMQTT
+export default AWSIoTMQTT;
+
+export AWSIoTData;
