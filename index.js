@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import AWS from 'aws-sdk/dist/aws-sdk-react-native';
+import AWS from 'aws-sdk';
 import {AWSIoTData} from './aws-iot-device-sdk-js-react-native.js';
 
 class AWSIoTMQTT extends Component {
