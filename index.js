@@ -30,7 +30,7 @@ class AWSIoTMQTT extends Component {
             // so we don't want to leave the user waiting too long for reconnection after
             // re-connecting to the network/re-opening their laptop/etc...
             //
-            maximumReconnectTimeMs: 1000,
+            maximumReconnectTimeMs: 8000,
             //
             // Enable console debugging information (optional)
             //
