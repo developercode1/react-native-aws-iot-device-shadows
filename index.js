@@ -34,7 +34,8 @@ class AWSIoTMQTT extends Component {
             //
             // Enable console debugging information (optional)
             //
-            debug: true,
+            debug: false,
+            keepAlive: 10,
             //
             // IMPORTANT: the AWS access key ID, secret key, and sesion token must be
             // initialized with empty strings.
@@ -96,39 +97,6 @@ class AWSIoTMQTT extends Component {
             console.log("accepted", thingName, stateObject)
         })
     }
-
-    _deframeMessages(data) {
-        let byteArray = new Uint8Array(data);
-        if (this.receiveBuffer) {
-          const receiveBufferLength = this.receiveBuffer.length;
-          const newData = new Uint8Array(receiveBufferLength + byteArray.length);
-          newData.set(this.receiveBuffer);
-          newData.set(byteArray, receiveBufferLength);
-          byteArray = newData;
-          this.receiveBuffer = null;
-        }
-        try {
-          let offset = 0;
-          let messages = [];
-          while (offset < byteArray.length) {
-            const result = decodeMessage(byteArray, offset);
-            console.log("RESULT", result);
-            const wireMessage = result[0];
-            offset = result[1];
-            if (wireMessage) {
-              messages.push(wireMessage);
-            } else {
-              break;
-            }
-          }
-          if (offset < byteArray.length) {
-            this.receiveBuffer = byteArray.subarray(offset);
-          }
-          return messages;
-        } catch (error) {
-          console.log("MESSAGE_DEFRAMING_ERROR", error);
-        }
-    }
     
     addThing (thingId, extraConfig ) {
         if (this.type==='device') {
@@ -136,6 +104,9 @@ class AWSIoTMQTT extends Component {
             return;
         }
         if (this.registry[thingId]) {
+            if (this.props.onThingConnected) {
+                this.props.onThingConnected(thingId);
+            }
             return;
         }
         let config = {
@@ -201,6 +172,15 @@ class AWSIoTMQTT extends Component {
             delete this.registry[thingName];
             this.service.unregister(thingName);
         }
+    }
+
+    delete(thingName) {
+        if (typeof thingName === 'string') {
+            delete this.registry[thingName];
+            const token = this.service.delete(thingName);
+            return token;
+        }
+        return null;
     }
     
     render (){
