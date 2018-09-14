@@ -182,6 +182,14 @@ class AWSIoTMQTT extends Component {
         }
         return null;
     }
+
+    end() {
+        if (this.props.onEnd) {
+            this.service.end(false, this.props.onEnd);
+        } else {
+            this.service.end(false);
+        }
+    }
     
     render (){
         return null
